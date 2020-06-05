@@ -5,7 +5,7 @@ The team members are:
 - Raymond Lu
 - Xiaocong Chen
 - Jiadai Liang
-- Mark Ma
+- Huanyun Fan
 - Yunfan Wang
 
 More updates will come after further information comes out.
