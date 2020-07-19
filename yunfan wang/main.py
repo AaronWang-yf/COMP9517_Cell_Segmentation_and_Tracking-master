@@ -8,17 +8,15 @@ path = "./data/Fluo-N2DL-HeLa/Sequence 5"
 
 file_lst = []
 os.chdir(path)
-for root, dirs, files in os.walk(".", topdown=False):
-    for name in files:
-        if name.endswith("tif"):
-            file_lst.append(os.path.join(root, name))
+root, file1, file2 = os.walk(".", topdown=False)
+files = root[2]
 if not os.path.exists("mask"):
     os.mkdir("mask")
 if not os.path.exists("tracking"):
     os.mkdir("tracking")
 
 # to store all cells info for all images
-cells_set = []
+image_set = []
 
 ### task 1 and 2
 
@@ -30,12 +28,11 @@ for img_path in files:
     thresh = detector.preprocess()
     cv2.imwrite("./mask/" + img_path, thresh)
     # tacking trajectory and division
-    matcher = po.matcher(img_path,cells)
-    cells.contours = detector.segmentation(thresh)
-    cells.cents = matcher.get_cent()
-    cells_set.append(cells)
+    cells.cell_set = detector.segmentation(thresh)
+    matcher = po.matcher(img_path, cells)
+    image_set.append(cells)
     matcher.draw_contours()
-    result = matcher.get_trajectory(cells_set)
+    result = matcher.get_trajectory(image_set)
     cv2.imwrite("./tracking/" + img_path, result)
 
 
