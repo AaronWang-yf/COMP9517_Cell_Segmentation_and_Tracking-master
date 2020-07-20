@@ -1,15 +1,18 @@
 import cv2
 import numpy as np
 
+
 class Preprocessor:
     def __init__(self, seq):
         # Save original images
-        self.original_images = seq 
-        # Preprocess images 
+        self.original_images = seq
+        # Preprocess images
         self.masks = self.preprocess(seq)
         # Counter is used to keep track of current image and mask on next() call
         self.counter = 0
-        
+        # Keep track if finished; 1 = not done
+        self.status = 1
+
     # Process an array of original images and return an array of masks
     def preprocess(self, seq):
         processed = []
@@ -23,13 +26,16 @@ class Preprocessor:
             thresh = cv2.dilate(thresh, np.ones((9, 9)))
             processed.append(thresh)
         return processed
-    
+
     def get_masks(self):
         return self.masks
-            
+
+    # Serves the next image and its mask
     def next(self):
-        # Serves the next image and its mask
+        # Indicate when done
+        if self.counter >= len(self.original_images) - 1:
+            self.status = 0
+        
         image, mask = self.original_images[self.counter], self.masks[self.counter]
         self.counter += 1
         return image, mask
-       
