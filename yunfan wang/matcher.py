@@ -45,53 +45,53 @@ class Matcher:
             for contour, cent, area in zip(contours, cents, areas):
                 self.register(contour, cent, area)
         else:
-            ### Perform matching and update matched cells, or add new cell if min_dist < DIST_THRESHOLD
-            # for contour, cent, area in zip(contours, cents, areas):
-            #     distances = [(self.__distance__(self.existing_cells[key].get_centroid(), cent), key) for key in
-            #                  self.existing_cells]
-            #     min_dist, key = sorted(distances, key=lambda x: x[0], reverse=False)[0]
-            #     if min_dist < DIST_THRESHOLD:
-            #         self.existing_cells[key].update(contour, cent, area)
-            #     else:
-            #         self.register(contour, cent, area)
-            temp_cells = copy.deepcopy(self.existing_cells)
-            if cents:
-                for key in temp_cells:
-                    existing_cent = temp_cells[key].get_centroid()
-                    existing_area = temp_cells[key].get_area()
-                    distances = [(self.__distance__(existing_cent, cent)) for cent in cents]
-                    distances = np.array(distances)
-                    min_dis = sorted(distances)[0]
-                    if len(distances) > 1:
-                        min_idx = int(np.where(distances == min_dis)[0])
-                    else:
-                        min_idx = 0
-                    if len(distances) > 1:
-                        sec_dis = sorted(distances)[1]
-                        sec_idx = int(np.where(distances == sec_dis)[0])
-                        if MIN_SPLIT_RATIO <= areas[min_idx] / existing_area <= MAX_SPLIT_RATIO and \
-                                MIN_SPLIT_RATIO <= areas[sec_idx] / existing_area <= MAX_SPLIT_RATIO and \
-                                sec_dis < DIST_THRESHOLD and sec_dis/min_dis <= MAX_DIS_RATIO:
-                            # self.existing_cells[key].split = True
-                            self.delete(self.existing_cells[key].get_id())
-                            self.register(contours[min_idx], cents[min_idx], areas[min_idx], True)
-                            self.register(contours[sec_idx], cents[sec_idx], areas[sec_idx], True)
-                            contours.pop(min_idx), contours.pop(sec_idx)
-                            cents.pop(min_idx), cents.pop(sec_idx)
-                            areas.pop(min_idx), areas.pop(sec_idx)
-                    if min_dis < DIST_THRESHOLD and MIN_SIZE_THRESHOLD <= areas[
-                        min_idx] / existing_area <= MAX_SIZE_THRESHOLD:
-                        self.existing_cells[key].update(contours[min_idx], cents[min_idx], areas[min_idx])
-                        contours.pop(min_idx)
-                        cents.pop(min_idx)
-                        areas.pop(min_idx)
+            ## Perform matching and update matched cells, or add new cell if min_dist < DIST_THRESHOLD
+            for contour, cent, area in zip(contours, cents, areas):
+                distances = [(self.__distance__(self.existing_cells[key].get_centroid(), cent), key) for key in
+                             self.existing_cells]
+                min_dist, key = sorted(distances, key=lambda x: x[0], reverse=False)[0]
+                if min_dist < DIST_THRESHOLD:
+                    self.existing_cells[key].update(contour, cent, area)
+                else:
+                    self.register(contour, cent, area)
+            # temp_cells = copy.deepcopy(self.existing_cells)
+            # if cents:
+            #     for key in temp_cells:
+            #         existing_cent = temp_cells[key].get_centroid()
+            #         existing_area = temp_cells[key].get_area()
+            #         distances = [(self.__distance__(existing_cent, cent)) for cent in cents]
+            #         distances = np.array(distances)
+            #         min_dis = sorted(distances)[0]
+            #         if len(distances) > 1:
+            #             min_idx = int(np.where(distances == min_dis)[0])
+            #         else:
+            #             min_idx = 0
+            #         if len(distances) > 1:
+            #             sec_dis = sorted(distances)[1]
+            #             sec_idx = int(np.where(distances == sec_dis)[0])
+            #             if MIN_SPLIT_RATIO <= areas[min_idx] / existing_area <= MAX_SPLIT_RATIO and \
+            #                     MIN_SPLIT_RATIO <= areas[sec_idx] / existing_area <= MAX_SPLIT_RATIO and \
+            #                     sec_dis < DIST_THRESHOLD and sec_dis/min_dis <= MAX_DIS_RATIO:
+            #                 # self.existing_cells[key].split = True
+            #                 self.delete(self.existing_cells[key].get_id())
+            #                 self.register(contours[min_idx], cents[min_idx], areas[min_idx], True)
+            #                 self.register(contours[sec_idx], cents[sec_idx], areas[sec_idx], True)
+            #                 contours.pop(min_idx), contours.pop(sec_idx)
+            #                 cents.pop(min_idx), cents.pop(sec_idx)
+            #                 areas.pop(min_idx), areas.pop(sec_idx)
+            #         if min_dis < DIST_THRESHOLD and MIN_SIZE_THRESHOLD <= areas[
+            #             min_idx] / existing_area <= MAX_SIZE_THRESHOLD:
+            #             self.existing_cells[key].update(contours[min_idx], cents[min_idx], areas[min_idx])
+            #             contours.pop(min_idx)
+            #             cents.pop(min_idx)
+            #             areas.pop(min_idx)
 
-                    else:
-                        self.delete(self.existing_cells[key].get_id())
+            #         else:
+            #             self.delete(self.existing_cells[key].get_id())
 
-            if cents:
-                for i in range(len(cents)):
-                    self.register(contours[i], cents[i], areas[i])
+            # if cents:
+            #     for i in range(len(cents)):
+            #         self.register(contours[i], cents[i], areas[i])
         return image, self.existing_cells
 
     def __distance__(self, p1, p2):

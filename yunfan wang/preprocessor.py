@@ -10,6 +10,8 @@ class Preprocessor:
         self.masks = self.preprocess(seq)
         # Counter is used to keep track of current image and mask on next() call
         self.counter = 0
+        # Keep track if finished; 1 = not done
+        self.status = 1
 
     # Process an array of original images and return an array of masks
     def preprocess(self, seq):
@@ -28,8 +30,12 @@ class Preprocessor:
     def get_masks(self):
         return self.masks
 
+    # Serves the next image and its mask
     def next(self):
-        # Serves the next image and its mask
+        # Indicate when done
+        if self.counter >= len(self.original_images) - 1:
+            self.status = 0
+        
         image, mask = self.original_images[self.counter], self.masks[self.counter]
         self.counter += 1
         return image, mask
