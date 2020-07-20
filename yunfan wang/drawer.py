@@ -1,4 +1,5 @@
 import cv2
+import copy
 
 CELL_COUNT_LOC = (20, 20)
 CELL_DETAILS_LOC = (20, 50)
@@ -18,7 +19,7 @@ class Drawer:
             ### one channel to three
             image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
             self.images_history.append(image)
-            self.cells_history.append(cells)
+            self.cells_history.append(copy.deepcopy(cells))
               
             # Apply contours and ids on to image
             for c in cells.values():
