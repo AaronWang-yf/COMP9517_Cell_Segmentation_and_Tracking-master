@@ -3,7 +3,6 @@ import cv2
 CELL_COUNT_LOC = (20, 20)
 CELL_DETAILS_LOC = (20, 50)
 
-
 class Drawer:
     def __init__(self, matcher, preprocessor):
         self.matcher = matcher
@@ -59,6 +58,10 @@ class Drawer:
                                 CELL_DETAILS_LOC, 1, 1, (0, 255, 0), 1)
         return image
     
-    # Returns all generated images in an array so they can be saved to disk
+    # Returns all generated images
     def get_gen_images(self):
         return self.gen_history
+    
+    # Returns cell history    
+    def get_cell_history(self):
+        return self.cells_history
