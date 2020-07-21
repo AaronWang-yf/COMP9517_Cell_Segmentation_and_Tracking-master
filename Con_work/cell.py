@@ -1,5 +1,6 @@
 import numpy as np
 
+AREA_THRESH = 1.5
 
 class Cell:
     def __init__(self, id, contour, cent, area, split = False):
@@ -56,7 +57,7 @@ class Cell:
         # Update key attributes
         self.contour = contour
         self.cent = cent
-        self.area = area
+        self.update_area(area) 
         # Recalculate metrics
         self.update_speed()
         self.update_total_dist()
@@ -71,6 +72,12 @@ class Cell:
             return 1 
         else:
             return 0
+    
+    # Detects increase in area beyond threshold and sets mitosis
+    def update_area(self, new_area):
+        if new_area > self.area * AREA_THRESH:
+            self.split = True
+        self.area = new_area        
         
     def update_speed(self):
         if len(self.previous_positions) > 1:

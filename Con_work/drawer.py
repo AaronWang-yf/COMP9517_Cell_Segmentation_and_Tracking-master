@@ -26,9 +26,9 @@ class Drawer:
                 ##### draw with different color if split
                 if_split = c.if_split()
                 if if_split:
-                    image = cv2.drawContours(image, c.get_contour(), -1, (255, 0, 0), 1)
+                    image = cv2.drawContours(image, c.get_contour(), -1, (255, 0, 0), 2)
                 else:
-                    image = cv2.drawContours(image, c.get_contour(), -1, (0, 255, 0), 1)
+                    image = cv2.drawContours(image, c.get_contour(), -1, (0, 255, 0), 2)
                 image = cv2.putText(image, str(c.get_id()), c.get_centroid(), 1, 1, (0, 255, 0), 1)
                 # Draw previous trajectory
                 previous_positions = c.get_prev_positions()
