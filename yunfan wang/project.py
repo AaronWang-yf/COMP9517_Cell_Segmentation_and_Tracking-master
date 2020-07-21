@@ -121,13 +121,13 @@ class matcher():
             distance_list.append(__distance__(point0, point1))
         return distance_list
 
-    def get_trajectory(self, cells_set):
+    def get_trajectory(self, cells_set_seq): # cells_set_seq: a sequence of cells in an individual image
 
-        if len(cells_set) > 1:
-            index = len(cells_set)
+        if len(cells_set_seq) > 1:
+            index = len(cells_set_seq)
             while index > 1:
-                second = cells_set[index - 1]  # current image
-                first = cells_set[index - 2]  # previous
+                second = cells_set_seq[index - 1]  # current image
+                first = cells_set[index - 2]  # previous image
                 index = index - 1
                 # ele  = class cell
                 for ele in second.cell_set:
@@ -135,8 +135,8 @@ class matcher():
                     dis_list = np.array(dis_list)
                     min_dis = sorted(dis_list)[0]
                     # print(min_dis)
-                    min = int(np.where(dis_list == min_dis)[0])
-                    nearest = first.cell_set[min]
+                    min_idx = int(np.where(dis_list == min_dis)[0])
+                    nearest = first.cell_set[min_idx]
                     # print(min)
                     if min_dis < 5:
                         self.origin = cv2.line(self.origin, ele.cent, nearest.cent, (0, 255, 0), 1, 4)
