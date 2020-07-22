@@ -31,6 +31,6 @@ class Params:
         self.save_model_frequency = 200 
         self.validation_percentage = 0.0
         #---------- DeepWater Parameters ----------#
-
+        # Please add your configuration of DeepWater in dw.config.py
 
 
