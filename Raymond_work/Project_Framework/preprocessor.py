@@ -4,13 +4,16 @@ from scipy import ndimage as ndi
 from libtiff import TIFF
 from skimage.segmentation import watershed
 from skimage.feature import peak_local_max
-import torch 
+import torch  # The pytorch version should be 0.3.1
 import sys 
 import ast
 sys.path.insert(0, './jnet_inference')
+sys.path.insert(0, './deepwater_inference')
 from jnet_inference.nets import Model,load_model_from_file
 from jnet_inference.evaluate import evaluate
 from jnet_inference.dataset import JNet_Cells
+from dw_config import load_config
+from deepwater_inference.src.deepwater_object import DeepWater
 
 class Preprocessor:
     def __init__(self, images,params):
@@ -21,7 +24,7 @@ class Preprocessor:
         self.model = None 
         self.dataset = None 
          
-        if (params.dataset=="DIC-C2DH-HeLa"):
+        if (params.dataset=="DIC-C2DH-HeLa" and params.nn_method=="JNet"):
             self.model = load_model_from_file(params.model_file)
         
         # Preprocess images 
@@ -43,8 +46,15 @@ class Preprocessor:
         return processed
 
     def get_DIC_masks(self,images):
-        dataset=JNet_Cells(self.original_images,[],self.params.dt_bound,ast.literal_eval(self.params.resolution_levels),load_to_memory=bool(self.params.load_dataset_to_ram))
-        return (evaluate(self.model,dataset,self.params))
+        if (self.params.nn_method=="JNet"):
+            dataset=JNet_Cells(self.original_images,[],self.params.dt_bound,ast.literal_eval(self.params.resolution_levels),load_to_memory=bool(self.params.load_dataset_to_ram))
+            return (evaluate(self.model,dataset,self.params))
+        elif(self.params.nn_method=="DeepWater"):
+            config = load_config(self.params,mode=2)
+            model = DeepWater(config)
+            return (model.test())
+        else:
+            raise ValueError("Neural Network Method should be JNet or DeepWater!")
 
     def get_Fluo_masks(self,images):
         def watershed_batch_process_2(img_path): 
@@ -84,10 +94,15 @@ class Preprocessor:
             th = np.array([th[0].max()]) 
             ret, thresh = cv2.threshold(img,th+10,255,cv2.THRESH_BINARY)
             return (thresh)
-        phc_masks = []
-        for img_path in images:
-            phc_masks.append(d3_threshold_seg(img_path))
-        return(phc_masks)
+        if (self.params.nn_method == "DeepWater"):
+            config = load_config(self.params,mode=2)
+            model = DeepWater(config)
+            return (model.test()) 
+        else:
+            phc_masks = []
+            for img_path in images:
+                phc_masks.append(d3_threshold_seg(img_path))
+            return(phc_masks)
 
     
     # Mask Getter

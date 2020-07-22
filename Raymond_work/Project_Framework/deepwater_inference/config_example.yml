@@ -1,0 +1,52 @@
+# DeepWater configuration file
+# https://gitlab.fi.muni.cz/xlux/deepwater
+# https://arxiv.org/abs/2004.01607
+
+# reference folder structure
+# -- DATASET_NAME
+#      -- 'SEQ'                        # 'SEQ' - name of sequence, two digit number, e.g. '01'
+#           -- t000.tif
+#           -- t001.tif
+#              ...
+#           -- tXXX.tif
+#      -- 'SEQ'_'REFERENCE'            # 'SEQ'_'REFERENCE' - type of reference, e.g. '01_GT', '01_ST'
+#           -- 'CELL_MASKS'            # reference segmentation (instance seg. or semantic seg.) e.g. 'SEG'
+#                -- man_seg000.tif
+#                -- man_seg001.tif
+#                   ...
+#                -- man_segXXX.tif
+#           -- 'MARKER_MASKS'          # reference markers e.g. 'TRA'
+#                -- man_track000.tif
+#                -- man_track001.tif
+#                   ...
+#                -- man_trackXXX.tif
+
+
+
+#### MAIN PARAMETERS ####
+
+DATASET_NAME: DIC-C2DH-HeLa           # dataset name
+
+# postprocessing
+MARKER_DIAMETER: 24                   # size of an average marker in pixels (h)
+MIN_MARKER_DYNAMICS: 5
+THR_MARKERS: 128
+THR_FOREGROUND: 200
+
+# training process
+LR: 0.001                             # initial learning rate
+BATCH_SIZE: 8                         # input batch size for training
+STEPS_PER_EPOCH: 60                   # mini-batches in one epoch
+EPOCHS: 200                           # maximal number of training epochs
+
+# OPTIONAL PARAMETERS
+# folders to GT
+REFERENCE: GT                         # 'SEQ'_'REFERENCE' - type of reference, e.g. '01_GT', '01_ST'
+CELL_MASKS: SEG                       # reference segmentation (instance seg. or semantic seg.) e.g. 'SEG'
+MARKER_MASKS: TRA                     # reference markers e.g. 'TRA'
+DIGITS: 3                             # number of digits in image names
+
+# img pre-processing
+NORMALIZATION: HE                     # normalization fce, one of [HE, median, CLAHE]
+UNEVEN_ILLUMINATION: False            # True if the dataset suffers from uneven illumination
+
