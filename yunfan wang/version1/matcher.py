@@ -5,8 +5,8 @@ from cell import Cell
 
 DIST_THRESHOLD = 50
 ### detect split
-MIN_SPLIT_RATIO = 0.3
-MAX_SPLIT_RATIO = 0.7
+MIN_SPLIT_RATIO = 0.2
+MAX_SPLIT_RATIO = 0.8
 MIN_SIZE_THRESHOLD = 0.5
 MAX_SIZE_THRESHOLD = 1.5
 MAX_DIS_RATIO = 2
@@ -88,14 +88,15 @@ class Matcher:
                         MIN_SPLIT_RATIO <= sec_area / old_area <= MAX_SPLIT_RATIO and \
                         sec_dist < DIST_THRESHOLD:
                     # self.existing_cells[key].split = True
-                    pre_cells[old].split_f = True
+                    pre_cells[old].split_p = True
                     self.existing_cells[min_key].split_c = True
                     self.existing_cells[sec_key].split_c = True
 
                 if min_dist < DIST_THRESHOLD and MIN_SIZE_THRESHOLD <= min_area / old_area <= MAX_SIZE_THRESHOLD and \
-                        pre_cells[old].split_f == False:
+                        pre_cells[old].split_p == False:
                     self.existing_cells[min_key] = pre_cells[old]
                     self.existing_cells[min_key].id = min_key
+                    self.existing_cells[min_key].split_c = False
                     self.existing_cells[min_key].update(min_contour, min_cent, min_area)
         return image, self.existing_cells
 

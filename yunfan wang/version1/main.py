@@ -32,7 +32,7 @@ def main():
     # Save all generated images and their masks to disk
     counter = 1
     for g in drawer.get_gen_images():
-        cv2.imwrite(path + f'gen/{counter}.tif', g)
+        cv2.imwrite(path + f'/{counter}.tif', g)
         cv2.imwrite(path + f'gen/mask_{counter}.tif', masks[counter - 1])
         counter += 1
     print('Saved all images')
@@ -52,9 +52,13 @@ def main():
                     display_image = drawer.serve(frame)
             else:
                 display_image = drawer.serve(frame)
-            plt.imshow(display_image)
-            plt.axis('off')
-            plt.show()
+            # plt.imshow(display_image)
+            # plt.axis('off')
+            # plt.show()
+            cv2.imshow('image',display_image)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
         else:
             break
 

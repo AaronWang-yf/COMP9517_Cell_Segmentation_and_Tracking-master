@@ -34,7 +34,7 @@ class Drawer:
                 previous_positions = c.get_prev_positions()
                 ##### draw with different color
                 for i in range(len(previous_positions) - 1):
-                    image = cv2.line(image, previous_positions[i], previous_positions[i + 1], (0, 255, 0), 1, 4)
+                    image = cv2.line(image, previous_positions[i], previous_positions[i + 1], (0, 0, 255), 1, 4)
 
             # Show count of cells
             image = cv2.putText(image, f'Cell count: {len(cells)}', CELL_COUNT_LOC, 1, 1, (0, 255, 0), 1)
@@ -53,7 +53,7 @@ class Drawer:
             total_dist = cell.get_total_dist()
             net_dist = cell.get_net_dist()
             confinement_ratio = cell.get_confinement_ratio()
-            print(f'{speed}, {total_dist}, {net_dist}, {confinement_ratio}')
+            print(f' Speed = {speed}\nTotal distance = {total_dist}\nNet distance = {net_dist}\nConfinement ratio = {confinement_ratio}\n')
             image = cv2.putText(image,
                                 f'Cell ID {id}: Speed = {speed:.2f}, Total distance = {total_dist:.2f}, Net distance = {net_dist:.2f}, Confinement ratio = {confinement_ratio:.2f}',
                                 CELL_DETAILS_LOC, 1, 1, (0, 255, 0), 1)

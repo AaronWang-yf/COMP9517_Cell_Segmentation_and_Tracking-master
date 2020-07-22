@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Cell:
-    def __init__(self, id, contour, cent, area, split_f = False,split_c=False):
+    def __init__(self, id, contour, cent, area, split_p = False,split_c=False):
         self.id = id
         self.contour = contour
         self.cent = cent
@@ -13,7 +13,7 @@ class Cell:
         self.net_dist = 0
         self.confinement_ratio = 0
         ### check if cell is splitting, default value is false
-        self.split_f = split_f  # father
+        self.split_p = split_p  # parent
         self.split_c = split_c  # child
 
 
@@ -31,7 +31,7 @@ class Cell:
         return self.contour
 
     def if_split(self):
-        return self.split_f or self.split_c
+        return self.split_p or self.split_c
 
     def get_speed(self):
         return self.speed
