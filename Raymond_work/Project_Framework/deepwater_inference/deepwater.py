@@ -136,7 +136,7 @@ def load_config(mode=None):
             copyfile(example_config_path, data_config_path)
         config_path = data_config_path
 
-    print(f"the configueration file was loaded from {config_path}")
+    print(f"Now the configuration file was loaded from {config_path}")
     config = Config(config_path)
     config.load_args(args)
 

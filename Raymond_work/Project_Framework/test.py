@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import time
 from param import Params 
 import os
+import numpy as np
 
 def main():
     params = Params() 
@@ -26,13 +27,23 @@ def main():
     else:
         path = params.dataset_root
     # seq = []
-    images = glob.glob(path + '*.tif')
+    images = glob.glob(path + '/*.tif')
+    #sort the order of images
+    images = [(int(x[-7:-4]),x) for x in images]
+    images.sort(key=lambda x:x[0])
+    images = [x[1] for x in images]
 
     preprocessor = Preprocessor(images,params)
 
-    print(len(preprocessor.get_masks()))
+    print("Now the length of masks is: ",len(preprocessor.get_masks()))
+    masks = preprocessor.get_masks() 
+    m0 = masks[0] 
+    m1 = masks[1]
     image,mask = preprocessor.next()
-    plt.imshow(image) 
-    plt.imshow(mask)
+    cv2.imwrite("test_image.tif",image) 
+    cv2.imwrite("test_mask.tif",mask.astype(np.uint16)) 
+    cv2.imwrite("m0.tif",m0.astype(np.uint16)) 
+    cv2.imwrite("m1.tif",m1.astype(np.uint16))
+
 
 main()

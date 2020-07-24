@@ -25,7 +25,7 @@ class DeepWater:
     def __init__(self, config):
         self.config = config
         self.mode = config.mode
-
+        self.checkpoint_path = config.checkpoint_path
         self.name = config.DATASET_NAME
         self.model_name = config.MODEL_NAME
         self.seq = config.SEQUENCE
@@ -37,7 +37,12 @@ class DeepWater:
         self.dim = config.DIM
         self.config_path = config.CONFIGURATION_PATH
         self.new_model = config.NEW_MODEL
+        
+        config.MODEL_MARKER_PATH = "model_markers"
+        print("\nIn deepwater_object now, the config.MODEL_MARKER_PATH is:",config.MODEL_MARKER_PATH,"\n")
         self.m_model_path = self._get_model_path(config.MODEL_MARKER_PATH)
+        print("\nIn deepwater_object now, the self.m_model_path is:",self.m_model_path,"\n")
+        print("\nIn deepwater_object now, the config.MODEL_FOREGROUND_PATH is:",config.MODEL_FOREGROUND_PATH,"\n")
         self.f_model_path = self._get_model_path(config.MODEL_FOREGROUND_PATH)
 
         self.marker_model = None
@@ -91,11 +96,16 @@ class DeepWater:
         marker_model = UNetModel(self.config)
         foreground_model = UNetModel(self.config)
 
+        print("\nIn deepwater_object now, the m_model_path is: ",self.m_model_path,"\n")
+
         marker_model.load(self.m_model_path)
         foreground_model.load(self.f_model_path)
 
+
         batch_size = self.batch_size
         n_batches = int(np.ceil(len(self.dataset) / batch_size))
+
+        
 
         if self.debug > 2:
             self.dataset.save_all()
@@ -109,6 +119,7 @@ class DeepWater:
             postprocess_markers = postprocess_markers_09
         else:
             postprocess_markers = pm
+
 
         for batch_index in tqdm(range(n_batches)):
             indexes = list(range(batch_index*batch_size, (batch_index + 1) * batch_size))
@@ -149,46 +160,10 @@ class DeepWater:
                 index = str(indexes[i]).zfill(self.digits)
 
                 # store result
-                # cv2.imwrite(f'{out_path}/mask{index}.tif',
-                #             labels.astype(np.uint16))
+                # cv2.imwrite(f'{out_path}/mask{index}.tif', labels.astype(np.uint16))
 
-                processed_masks.append((indexes[i],labels.astype(np.uint16)))
-
-                # if self.display:
-                #     prediction_result = np.concatenate((marker_image, foreground_image), axis=1)
-                #     cv2.imwrite(f'{viz_path}/network_predictions{index}.tif',
-                #                 prediction_result.astype(np.uint8))
-
-                #     if self.debug > 0:
-                #         ws_functions = np.concatenate((marker_function, foreground), axis=1)
-                #         cv2.imwrite(f'{viz_path}/ws_functions{index}.tif',
-                #                     ws_functions.astype(np.uint8))
-
-                #         cv2.imwrite(f'{viz_path}/m{index}.tif',
-                #                     marker_image)
-                #         cv2.imwrite(f'{viz_path}/c{index}.tif',
-                #                     foreground_image.astype(np.uint8))
-                #         cv2.imwrite(f'{viz_path}/marker_fc{index}.tif',
-                #                     marker_function.astype(np.uint8))
-                #         cv2.imwrite(f'{viz_path}/cell_mask{index}.tif',
-                #                     foreground.astype(np.uint8))
-
-                #         o = self.dataset.get_image(indexes[i])
-                #         overlay = overlay_labels(o, labels)
-                #         cv2.imwrite(f'{viz_path}/segmentation{index}.tif',
-                #                     overlay.astype(np.uint8))
-
-                #         np.save(f'{viz_path}/m_or{index}', marker_prediction[i, ...])
-                #         np.save(f'{viz_path}/c_or{index}', foreground_prediction[i, ...])
-
-        # print('Prediction completed!\n')
-        # if self.tracking:
-        #     print('Creates tracking...\n')
-        #     create_tracking(out_path, out_path)
-        # if self.display:
-        #     self._store_visualisations(viz_path,
-        #                                out_path)
-        processed_masks.sort(key= lambda x:x[0],reversed=False) 
+                processed_masks.append((indexes[i],labels))
+        processed_masks.sort(key= lambda x:x[0],reverse=False) 
         processed_masks = [x[1] for x in processed_masks]
         return(processed_masks)
 
@@ -298,6 +273,7 @@ class DeepWater:
         return True
 
     def _get_model_path(self, model_name):
+        self.config_path = "./deepwater_inference/checkpoints" 
         path = os.path.join(self.config_path, self.model_name)
         files = [f for f in os.listdir(path) if model_name in f]
         files.sort()
@@ -310,7 +286,7 @@ class DeepWater:
             print(f'loaded model {files[-1]}')
         return os.path.join(path, files[-1])
 
-    def _store_network_inputs(self, img_path, dataset, tag='marker'):
+    def _store_network_inputs(self, img_path, dataset, tag='marker'): 
         debug_path = os.path.join(img_path, 'DEBUG')
         if not os.path.isdir(debug_path):
             os.mkdir(debug_path)

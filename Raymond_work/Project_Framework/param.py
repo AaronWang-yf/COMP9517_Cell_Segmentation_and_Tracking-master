@@ -3,7 +3,7 @@ class Params:
         #---------- General Parameters ----------#
         self.dataset_root = "./datasets/DIC-C2DH-HeLa" 
         self.dataset = "DIC-C2DH-HeLa"
-        self.nn_method = "JNet" # choose JNet or DeepWater
+        self.nn_method = "DeepWater" # choose JNet or DeepWater
         #---------- JNet Parameters ----------#
         self.cuda = True 
         self.images_idx = {"01":[]}

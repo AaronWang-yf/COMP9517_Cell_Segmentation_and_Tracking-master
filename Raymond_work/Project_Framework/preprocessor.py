@@ -1,10 +1,10 @@
 import cv2
-import numpy as np
+import numpy as np 
+import tensorflow as tf
 from scipy import ndimage as ndi 
 from libtiff import TIFF
 from skimage.segmentation import watershed
 from skimage.feature import peak_local_max
-import torch  # The pytorch version should be 0.3.1
 import sys 
 import ast
 sys.path.insert(0, './jnet_inference')
@@ -20,7 +20,7 @@ class Preprocessor:
         # Save original images file names
         self.original_images = images
         self.params = params 
-        self.params.cuda = torch.cuda.is_available() and params.cuda 
+        self.params.cuda = params.cuda 
         self.model = None 
         self.dataset = None 
          
@@ -37,7 +37,6 @@ class Preprocessor:
         processed = []
         if (self.params.dataset=="DIC-C2DH-HeLa"):
             processed = self.get_DIC_masks(images)
-            print("get_DIC_masks done")
         elif(self.params.dataset=="Fluo-N2DL-HeLa"):
             processed = self.get_Fluo_masks(images)
         elif(self.params.dataset=="PhC-C2DL-PSC"):
@@ -70,6 +69,7 @@ class Preprocessor:
         elif(self.params.nn_method=="DeepWater"):
             config = load_config(self.params,mode=2)
             model = DeepWater(config)
+            print("Start segmentation...")
             return (model.test())
         else:
             raise ValueError("Neural Network Method should be JNet or DeepWater!")
