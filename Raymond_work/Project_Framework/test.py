@@ -24,6 +24,8 @@ def main():
 
     if (params.dataset == "DIC-C2DH-HeLa"):
         path = params.dataset_root + "/"+ str(list(params.images_idx.keys())[0])
+    elif (params.dataset=="PhC-C2DL-PSC" and params.nn_method=="DeepWater"):
+        path = params.dataset_root + "/"+ str(list(params.images_idx.keys())[0])
     else:
         path = params.dataset_root
     # seq = []

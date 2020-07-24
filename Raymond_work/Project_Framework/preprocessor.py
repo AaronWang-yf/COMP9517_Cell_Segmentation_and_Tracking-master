@@ -18,6 +18,7 @@ from deepwater_inference.src.deepwater_object import DeepWater
 class Preprocessor:
     def __init__(self, images,params):
         # Save original images file names
+        # print("In initialization now, the length of images is:", len(images))
         self.original_images = images
         self.params = params 
         self.params.cuda = params.cuda 
@@ -40,7 +41,7 @@ class Preprocessor:
         elif(self.params.dataset=="Fluo-N2DL-HeLa"):
             processed = self.get_Fluo_masks(images)
         elif(self.params.dataset=="PhC-C2DL-PSC"):
-            processed = self.get_Phc_masks(images)
+            processed = self.get_PHC_masks(images)
         else:
             raise ValueError("Dataset "+self.params.dataset+" is not supported!")
         return processed
@@ -101,7 +102,7 @@ class Preprocessor:
         return(fluo_masks)
 
 
-    def get_PhC_mask(self,images):
+    def get_PHC_masks(self,images):
         def d3_threshold_seg(img_path):
             img = cv2.imread(img_path,cv2.IMREAD_GRAYSCALE) 
             img = cv2.erode(img,np.ones((2,2)))
@@ -115,6 +116,7 @@ class Preprocessor:
         if (self.params.nn_method == "DeepWater"):
             config = load_config(self.params,mode=2)
             model = DeepWater(config)
+            print("Start segmentation...")
             return (model.test()) 
         else:
             phc_masks = []

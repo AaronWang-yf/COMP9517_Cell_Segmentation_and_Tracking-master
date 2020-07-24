@@ -39,10 +39,10 @@ class DeepWater:
         self.new_model = config.NEW_MODEL
         
         config.MODEL_MARKER_PATH = "model_markers"
-        print("\nIn deepwater_object now, the config.MODEL_MARKER_PATH is:",config.MODEL_MARKER_PATH,"\n")
+        # print("\nIn deepwater_object now, the config.MODEL_MARKER_PATH is:",config.MODEL_MARKER_PATH,"\n")
         self.m_model_path = self._get_model_path(config.MODEL_MARKER_PATH)
-        print("\nIn deepwater_object now, the self.m_model_path is:",self.m_model_path,"\n")
-        print("\nIn deepwater_object now, the config.MODEL_FOREGROUND_PATH is:",config.MODEL_FOREGROUND_PATH,"\n")
+        # print("\nIn deepwater_object now, the self.m_model_path is:",self.m_model_path,"\n")
+        # print("\nIn deepwater_object now, the config.MODEL_FOREGROUND_PATH is:",config.MODEL_FOREGROUND_PATH,"\n")
         self.f_model_path = self._get_model_path(config.MODEL_FOREGROUND_PATH)
 
         self.marker_model = None
@@ -96,7 +96,7 @@ class DeepWater:
         marker_model = UNetModel(self.config)
         foreground_model = UNetModel(self.config)
 
-        print("\nIn deepwater_object now, the m_model_path is: ",self.m_model_path,"\n")
+        # print("\nIn deepwater_object now, the m_model_path is: ",self.m_model_path,"\n")
 
         marker_model.load(self.m_model_path)
         foreground_model.load(self.f_model_path)
