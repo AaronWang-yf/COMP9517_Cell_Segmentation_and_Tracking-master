@@ -8,6 +8,7 @@ import cv2
 import matplotlib.pyplot as plt
 import time
 from param import Params
+import os
 
 # path = 'data/Fluo-N2DL-HeLa/Sequence 1/'
 
@@ -20,7 +21,7 @@ def main():
         raise Exception("Unable to load images from "+params.dataset_root+": not a directory")
 
     if not os.path.exists(params.output_dir):
-        os.mkdir(params.output_dir) 
+        os.makedirs(params.output_dir) 
     
     if not os.path.isdir(params.output_dir):
         raise Exception("Unable to save results to "+params.output_dir+": not a directory")
@@ -30,10 +31,11 @@ def main():
     else:
         path = params.dataset_root
     # seq = []
-    images = glob.glob(path + '*.tif')
-    # for i in images:
-    #     image = cv2.imread(i, cv2.IMREAD_GRAYSCALE)
-    #     seq.append(image)
+    images = glob.glob(path + '/*.tif')
+     #sort the order of images
+    images = [(int(x[-7:-4]),x) for x in images]
+    images.sort(key=lambda x:x[0])
+    images = [x[1] for x in images]
         
     preprocessor = Preprocessor(images,params)
     detector = Detector(preprocessor)

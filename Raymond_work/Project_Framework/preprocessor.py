@@ -17,8 +17,8 @@ from deepwater_inference.src.deepwater_object import DeepWater
 
 class Preprocessor:
     def __init__(self, images,params):
-        # Save original images
-        # self.original_images = images
+        # Save original images file names
+        self.original_images = images
         self.params = params 
         self.params.cuda = torch.cuda.is_available() and params.cuda 
         self.model = None 
@@ -36,19 +36,37 @@ class Preprocessor:
     def preprocess(self,images):
         processed = []
         if (self.params.dataset=="DIC-C2DH-HeLa"):
-            processed = get_DIC_masks(self,images)
+            processed = self.get_DIC_masks(images)
+            print("get_DIC_masks done")
         elif(self.params.dataset=="Fluo-N2DL-HeLa"):
-            processed = get_Fluo_masks(self,images)
+            processed = self.get_Fluo_masks(images)
         elif(self.params.dataset=="PhC-C2DL-PSC"):
-            processed = get_Phc_masks(self,images)
+            processed = self.get_Phc_masks(images)
         else:
             raise ValueError("Dataset "+self.params.dataset+" is not supported!")
         return processed
 
     def get_DIC_masks(self,images):
+        def post_process(mask): # Use opening operation and watershed to improve the JNet Masks
+            ret, mask_threh = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+            blurred = cv2.GaussianBlur(mask_threh, (9,9),0)
+            kernel=np.ones((5,5),np.uint8) 
+            erosion=cv2.erode(blurred,kernel,iterations=1) 
+            dilation=cv2.dilate(erosion,kernel,iterations=1) 
+            ret, thresh = cv2.threshold(dilation, 190, 255, cv2.THRESH_BINARY)
+            distance = ndi.distance_transform_edt(thresh)
+            local_maxi = peak_local_max(distance, indices=False, footprint=np.ones((55,55)),labels=thresh)
+            markers = ndi.label(local_maxi)[0]
+            labels = watershed(-distance, markers, mask=thresh)
+            return (labels)
+
         if (self.params.nn_method=="JNet"):
             dataset=JNet_Cells(self.original_images,[],self.params.dt_bound,ast.literal_eval(self.params.resolution_levels),load_to_memory=bool(self.params.load_dataset_to_ram))
-            return (evaluate(self.model,dataset,self.params))
+            dic_masks = evaluate(self.model,dataset,self.params) 
+            new_masks = [] 
+            for mask in dic_masks:
+                new_masks.append(post_process(mask))
+            return (new_masks)
         elif(self.params.nn_method=="DeepWater"):
             config = load_config(self.params,mode=2)
             model = DeepWater(config)
@@ -111,7 +129,8 @@ class Preprocessor:
             
     def next(self):
         # Serves the next image and its mask
-        image, mask = self.original_images[self.counter], self.masks[self.counter]
+        image = cv2.imread(self.original_images[self.counter],-1)
+        mask = self.masks[self.counter]
         self.counter += 1
         return image, mask
        
