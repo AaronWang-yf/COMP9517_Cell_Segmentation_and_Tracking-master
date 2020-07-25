@@ -27,13 +27,16 @@ def main():
 
     if (params.dataset == "DIC-C2DH-HeLa"):
         path = params.dataset_root + "/"+ str(list(params.images_idx.keys())[0])
+    elif (params.dataset=="PhC-C2DL-PSC" and params.nn_method=="DeepWater"):
+        path = params.dataset_root + "/"+ str(list(params.images_idx.keys())[0])
     else:
         path = params.dataset_root
     # seq = []
     images = glob.glob(path + '*.tif')
-    # for i in images:
-    #     image = cv2.imread(i, cv2.IMREAD_GRAYSCALE)
-    #     seq.append(image)
+    #sort the order of images
+    images = [(int(x[-7:-4]),x) for x in images]
+    images.sort(key=lambda x:x[0])
+    images = [x[1] for x in images]
         
     preprocessor = Preprocessor(images,params)
     detector = Detector(preprocessor)

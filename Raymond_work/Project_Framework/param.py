@@ -1,12 +1,15 @@
+# Normal user should only modify the values in General Parameters and Neural Network Parameters
+
 class Params:
     def __init__(self):
         #---------- General Parameters ----------#
         self.dataset_root = "./datasets/DIC-C2DH-HeLa" 
         self.dataset = "DIC-C2DH-HeLa"
+        #---------- Neural Network Parameters ----------#
         self.nn_method = "DeepWater" # choose JNet or DeepWater
-        #---------- JNet Parameters ----------#
-        self.cuda = True 
         self.images_idx = {"01":[]}
+        self.cuda = True 
+        #---------- JNet Parameters ----------#
         self.output_dir = "./results/segmentations"
         self.mode = 'vis'
         self.resolution_levels ='[-2,-1,0]'#List of resolutions in the pipeline. 0 means the original resolution, -1 downscale by factor 2, -2 downscale by factor 4 etc

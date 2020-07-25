@@ -9,7 +9,7 @@ class DwConfig:
     def __init__(self,params):
         self.model_name = params.dataset
         self.name = params.dataset
-        self.sequence = "01" # For Sequence x, you should input 0x
+        self.sequence = str(list(params.images_idx.keys())[0]) # For Sequence x, you should input 0x
         self.checkpoint_path = "./deepwater_inference/checkpoints"
         self.data_path = "./datasets"
         self.dw_path = "."
