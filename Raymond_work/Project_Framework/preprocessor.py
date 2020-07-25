@@ -19,6 +19,7 @@ class Preprocessor:
     def __init__(self, images,params):
         # Save original images file names
         # print("In initialization now, the length of images is:", len(images))
+        self.remaining_img = len(images)
         self.original_images = images
         self.params = params 
         self.params.cuda = params.cuda 
@@ -134,5 +135,8 @@ class Preprocessor:
         image = cv2.imread(self.original_images[self.counter],-1)
         mask = self.masks[self.counter]
         self.counter += 1
+        self.remaining_img -=1 
+        if (self.remaining_img==0):
+            print("WARNING: there are no images left in the list now!")
         return image, mask
        
