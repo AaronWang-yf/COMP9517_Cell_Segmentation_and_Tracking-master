@@ -6,7 +6,7 @@ class Params:
         self.dataset_root = "./datasets/DIC-C2DH-HeLa" 
         self.dataset = "DIC-C2DH-HeLa"
         #---------- Neural Network Parameters ----------#
-        self.nn_method = "DeepWater" # choose JNet or DeepWater
+        self.nn_method = "DeepWater" # choose JNet or DeepWater or None
         self.images_idx = {"01":[]}
         self.cuda = True 
         #---------- JNet Parameters ----------#

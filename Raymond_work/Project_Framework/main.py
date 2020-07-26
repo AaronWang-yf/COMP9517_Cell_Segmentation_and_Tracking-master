@@ -32,7 +32,7 @@ def main():
     else:
         path = params.dataset_root
     # seq = []
-    images = glob.glob(path + '*.tif')
+    images = glob.glob(path + '/*.tif')
     #sort the order of images
     images = [(int(x[-7:-4]),x) for x in images]
     images.sort(key=lambda x:x[0])
