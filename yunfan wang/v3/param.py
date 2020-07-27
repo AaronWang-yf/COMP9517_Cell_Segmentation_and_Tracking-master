@@ -3,10 +3,10 @@
 class Params:
     def __init__(self):
         #---------- General Parameters ----------#
-        self.dataset_root = "./datasets/DIC-C2DH-HeLa" 
-        self.dataset = "DIC-C2DH-HeLa"
+        self.dataset_root = "./data/Fluo-N2DL-HeLa/01"
+        self.dataset = "Fluo-N2DL-HeLa"
         #---------- Neural Network Parameters ----------#
-        self.nn_method = "DeepWater" # choose JNet or DeepWater or None
+        self.nn_method = "None" # choose JNet or DeepWater
         self.images_idx = {"01":[]}
         self.cuda = True 
         #---------- JNet Parameters ----------#

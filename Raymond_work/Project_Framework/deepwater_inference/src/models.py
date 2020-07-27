@@ -2,7 +2,7 @@ from keras.models import Model, load_model
 from keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Concatenate, Lambda
 from keras.optimizers import Adam, SGD
 from .dataset import Dataset
-from tensorflow import set_random_seed
+# from tensorflow import set_random_seed
 import tensorflow as tf
 import os
 from .loss_functions import cross_entropy_balanced, w_cren_2ch_bala
@@ -32,10 +32,9 @@ class UNetModel(Model):
         self.steps_per_epoch = config.STEPS_PER_EPOCH
         self.epochs = config.EPOCHS
 
-        set_random_seed(2)
-
+        tf.random.set_seed(2)
+        # set_random_seed(2)
         input_layer, output_layer = self._create_unet()
-
         super(UNetModel, self).__init__(input_layer, output_layer)
         self.compile(optimizer=Adam(lr=self.lr), loss=self.loss_function)
 
@@ -57,7 +56,6 @@ class UNetModel(Model):
             return c4
 
     def _create_unet(self):
-
         input_layer = Input(shape=self.dim)
         n_maps = self.feature_maps
         level = self.downsampling_levels

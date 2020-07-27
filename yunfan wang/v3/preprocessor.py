@@ -33,7 +33,8 @@ class Preprocessor:
         self.masks = self.preprocess(images)
         # Counter is used to keep track of current image and mask on next() call
         self.counter = 0
-        
+        # Keep track if finished; 1 = not done
+        self.status = 1
     # Process an array of original images and return an array of masks
     def preprocess(self,images):
         processed = []
@@ -78,25 +79,17 @@ class Preprocessor:
 
     def get_Fluo_masks(self,images):
         def watershed_batch_process_2(img_path): 
-            tif = TIFF.open(img_path,mode='r')
-            image = tif.read_image()
-            sobelX = cv2.Sobel(image,cv2.CV_64F,1,0)# gradient in x direction
-            sobelY = cv2.Sobel(image,cv2.CV_64F,0,1)# gradient in y direction
-            sobelX = np.uint8(np.absolute(sobelX))
-            sobelY = np.uint8(np.absolute(sobelY))
-            image = cv2.bitwise_or(sobelX,sobelY)
-            ret, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-            image = cv2.medianBlur(image, 9)
-            image = cv2.dilate(image, np.ones((3,3), np.uint8))
-            image = cv2.erode(image, np.ones((19,19), np.uint8))
-            image = cv2.dilate(image, np.ones((13,13), np.uint8))
-            distance = ndi.distance_transform_edt(image)
-            local_maxi = peak_local_max(distance, indices=False, footprint=np.ones((9, 9)),labels=image)
-            markers = ndi.label(local_maxi)[0]
-            labels = watershed(-distance, markers, mask=image)
-            labels = cv2.normalize(labels,None, 0, 255, cv2.NORM_MINMAX)
-            labels[np.where(labels>10)] = 255
-            return (labels)
+            # tif = TIFF.open(img_path,mode='r')
+            # image = tif.read_image()
+            image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+            kernel = 11
+            img = cv2.GaussianBlur(image, (kernel, kernel), 0)
+            hist, bins = np.histogram(img.flatten(), 256, [0, 256])
+            th = np.where(hist == np.max(hist))[0]
+            ret, thresh = cv2.threshold(img, th[0] + 1, 255, cv2.THRESH_BINARY)
+            thresh = cv2.erode(thresh, np.ones((9, 9)))
+            thresh = cv2.dilate(thresh, np.ones((9, 9)))
+            return thresh
         fluo_masks = [] 
         for img_path in self.original_images:
             fluo_masks.append(watershed_batch_process_2(img_path))
@@ -112,7 +105,13 @@ class Preprocessor:
             hist,bins = np.histogram(img.flatten(),256,[0,256])
             th  = np.where(hist ==np.max(hist))
             th = np.array([th[0].max()]) 
-            ret, thresh = cv2.threshold(img,th+10,255,cv2.THRESH_BINARY)
+            ret, thresh = cv2.threshold(img,th+20,255,cv2.THRESH_BINARY)
+            # distance = ndi.distance_transform_edt(thresh)
+            # local_maxi = peak_local_max(distance, indices=False, footprint=np.ones((100, 100)),
+            #                             labels=thresh)
+            # markers = ndi.label(local_maxi)[0]
+            # labels = watershed(-distance, markers, mask=thresh)
+            # labels = labels.astype(np.uint8)
             return (thresh)
         if (self.params.nn_method == "DeepWater"):
             config = load_config(self.params,mode=2)
@@ -131,12 +130,17 @@ class Preprocessor:
         return self.masks
             
     def next(self):
+
+        # Indicate when done
+        if self.counter >= self.remaining_img - 1:
+            self.status = 0
+
         # Serves the next image and its mask
-        image = cv2.imread(self.original_images[self.counter],-1)
+        image = cv2.imread(self.original_images[self.counter],cv2.IMREAD_GRAYSCALE)
         mask = self.masks[self.counter]
         self.counter += 1
-        self.remaining_img -=1 
-        if (self.remaining_img==0):
-            print("WARNING: there are no images left in the list now!")
+        # self.remaining_img -=1
+        # if (self.remaining_img==0):
+        #     print("WARNING: there are no images left in the list now!")
         return image, mask
        

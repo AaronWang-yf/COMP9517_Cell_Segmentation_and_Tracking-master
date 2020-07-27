@@ -7,15 +7,12 @@ import glob
 import cv2
 import matplotlib.pyplot as plt
 import time
-from param import Params
-
-# path = 'data/Fluo-N2DL-HeLa/Sequence 1/'
-
-
+from param import Params 
+import os
+import numpy as np
 
 def main():
-    params = Params()
-
+    params = Params() 
     if not os.path.isdir(params.dataset_root):
         raise Exception("Unable to load images from "+params.dataset_root+": not a directory")
 
@@ -37,29 +34,18 @@ def main():
     images = [(int(x[-7:-4]),x) for x in images]
     images.sort(key=lambda x:x[0])
     images = [x[1] for x in images]
-        
+
     preprocessor = Preprocessor(images,params)
-    detector = Detector(preprocessor)
-    matcher = Matcher(detector)
-    drawer = Drawer(matcher)
-    
-    masks = preprocessor.get_masks()
-    
-    counter = 1
-    while True:
-        inp = input('Serving next frame... type a Cell ID to inspect details')
-        drawer.next()
-        try:
-            inp = int(inp)
-            display_image = drawer.serve(inp)
-        except:
-            print(f'Not an integer')
-            display_image = drawer.serve()
-            
-        plt.imsave(path + f'gen/{counter}.jpg', display_image)
-        plt.imsave(path + f'gen/{counter}_mask.jpg', masks[counter])
-        counter += 1
+
+    print("Now the length of masks is: ",len(preprocessor.get_masks()))
+    masks = preprocessor.get_masks() 
+    m0 = masks[0] 
+    m1 = masks[1]
+    image,mask = preprocessor.next()
+    cv2.imwrite("test_image.tif",image) 
+    cv2.imwrite("test_mask.tif",mask.astype(np.uint16)) 
+    cv2.imwrite("m0.tif",m0.astype(np.uint16)) 
+    cv2.imwrite("m1.tif",m1.astype(np.uint16))
 
 
-if __name__ == '__main__':
-    main()
+main()
