@@ -51,13 +51,16 @@ def main():
     drawer.load()
     print('Successfully loaded all images')
 
-    if os.path.exists(f'{path}/gen'):
-        os.makedirs(f"{path}/gen")
+    gen_path = path + "/gen"
+    print("Now the gen path is ",gen_path)
+    if not os.path.exists(gen_path):
+        os.mkdir(gen_path)
+        print("gen path created successfully")
 
     counter = 1
     for g in drawer.get_gen_images():
-        cv2.imwrite(f'{path}/gen/{counter}.tif', g)
-        cv2.imwrite(f'{path}/gen/mask_{counter}.tif', masks[counter - 1])
+        cv2.imwrite(f'{gen_path}/{counter}.tif', g)
+        cv2.imwrite(f'{gen_path}/mask_{counter}.tif', masks[counter - 1])
         counter += 1
     print('Saved all images')
 
@@ -68,26 +71,37 @@ def main():
     # 2nd num is not compulsory, with 1 number it will just show the image
     # press ENTER without any input will end the program
     # all inputs are assumed right
+
+    analysis_path = path + "/analysis"
+    if not os.path.exists(analysis_path):
+      os.mkdir(analysis_path)
+      print("analysis path created successfully")
+
+
     while True:
+        frame = None 
+        cell_id = None
         string = input('Input a frame and cell ID (optional) separated by a space...\n')
         if string:
             string = string.split(' ')
             frame = int(string[0])
             if len(string) > 1:
                 try:
-                    id = int(string[1])
-                    display_image = drawer.serve(frame, id)
+                    cell_id = int(string[1])
+                    display_image = drawer.serve(frame, cell_id)
                 except ValueError:
                     print(f'Not an integer')
                     display_image = drawer.serve(frame)
             else:
                 display_image = drawer.serve(frame)
-            plt.imshow(display_image)
-            plt.axis('off')
-            plt.show()
+            # plt.imshow(display_image)
+            # plt.axis('off')
+            # plt.show()
             # cv2.imshow('image', display_image)
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
+            file_name = analysis_path+"/frame_"+str(frame)+"_cellID_"+str(cell_id)+".tif"
+            cv2.imwrite(file_name,display_image)
 
         else:
             break

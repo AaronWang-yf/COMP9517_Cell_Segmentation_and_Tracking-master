@@ -1,0 +1,387 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Conference Paper Title*\\
+{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
+should not be used}
+\thanks{Identify applicable funding agency here. If none, delete this.}
+}
+
+\author{Raymond Lu, Shuang Liang, Yunfan Wang, Xiaocong Chen, Con Tieu-Vinh}
+
+\maketitle
+
+\begin{abstract}
+This document is a model and instructions for \LaTeX.
+This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
+or Math in Paper Title or Abstract.
+\end{abstract}
+
+\begin{IEEEkeywords}
+component, formatting, style, styling, insert
+\end{IEEEkeywords}
+
+
+\section{Introduction}
+%Discuss your understanding of the task specification and data sets.
+%background: video, img
+%why chanllenge
+
+%function
+%methos(seg:sobel,tracking)
+
+%not related is ok
+A good understanding of living things needs various analyses of its anatomic and dynamic properties, which can be gained from live-cell imaging experiments\cite{b1}. The more data these experiments generate, the better the behaviour of cell populations can be represented. Therefore, for better result, these experiments often produce a great number of time-lapse image data. It helps in high-throughput spatiotemporal measurements of cell behaviors like migration, mitosis, apoptosis and the reconstruction of cell lineages\cite{b2}, \cite{b3}, but makes the computing complex. Other challenges are related to the quality and content of the image data like poor contrast with high noise levels, irregular cell contours, entry and exit of the cells\cite{b3}, \cite{b4}. To deal with these large amount of data with different quality and content, people have developed many kinds of cell detecting and tracking techniques. \par
+
+For detecting, the easiest way is to use threshold if cells in images have different intensities than their neighbouring areas\cite{b1}. However, due to its simplicity, it is one of the most error-prone method and often fail when noise levels are high, contrast are low or the cells overlap. A complex and popular method for detecting and segmentation is template matching, but it only performs well when cell contours are simple and regular\cite{b5}. Another popular but more robust approach is watershed transformation, which can completely separates cells but are prone to over-segmentation. Model-based segmentation can produce more sensible results, but are prone to under-segmentation. Therefore, both of the approaches mentioned before need some postprecession\cite{b6}. \par
+
+As for tracking techniques, finding the nearest cell in last frame based on their centroid position is a  straightforward approach. It works well if the cells in the images move in a slow pace and not close to the other cells. In the cases that cells are intensively populated or move fast, this method should be extended to include some other basic properties such as areas, contours, overall mean distances, curvature and intensities\cite{b6}. But it still can not deal with the movement and apoptosis of some cells. In 2013, the rank-based filtering mechanism are refined in maximum cardinality minimum weight bipartite matching\cite{b3}. The matched pairs are sorted based on their matching cost and only the top q percentage of the pairs are selected as correct matches, which can deal with the exit or apoptosis of the cells with higher probability. Another trend intending to use stochastic knowledge are called probabilistic methods, including Bayesian inference, Kalman filtering and Particle filtering. They are also powerful techniques for tracking cells.\par
+
+Our task is to try as many computer vision methods as possible, compare their difference and select the most appropriate way to detect, track and analyse cells. We have three data sets with different quality and face three kinds of challenges. 
+Firstly, cells in DIC-C2DH-HeLa set are so big and closer to each other that it is a little difficult to detect them and make a segmentation. We mainly use two different ways to generate marks for later segmentation. The first method we exploited is called J-net, which is a multiresolution neural network for semantic segmentation. Based on the masks produced by this approach, we then use some basic image processing operations, like threshold, Gaussian blur, erosion, dilation and watershed, to improve the segmentation. And the other one is called deep water transformation, which can deal with this data set perfectly as well.
+Cells in Fluo-N2DL-HeLa set have low contrast and need some basic image pre-processing strategies. We use Gaussian blur to remove noises in the images and use threshold to increase the contrast for better visualization. After that, we use erode and dilate to separate the cells.
+Cells in PhC-C2DL-PSC set are intensively populated and some of them move in a high pace. We firstly use erode operator and Gaussian blur to get rid of the noises. Then we use threshold to increase the contrast. This data set can also be dealt with the deep water transformation mentioned above.
+As for the tracking part, we choose the nearest-neighbor linking approach based on the distances and areas, which is not so sophisticated and can match most of the cells correctly.\par
+In summary, the contribution of this paper include:
+\begin{itemize}
+\item We propose a model that can deal with all three different kinds of data sets.
+\item emmm...
+\item emm...
+\item em...
+\item e...
+\end{itemize}
+
+
+\section{Literature Review}
+%Review relevant techniques in literature, along with any necessary background to understand the techniques you selected.
+\subsection{Cell segmentation in computer vision.} 
+Cell segmentation distinguishes individual cells from images [1] and could be regarded as the most significant and the most fundamental task in cell analysis. The reason is that subsequent cell analysis, such as mitosis and motion, often require cell boundary as an essential feature to do further processes [2]. \par
+In recent years, various state-of-the-art approaches have been proposed to improve cell segmentation. Existing traditional methods such as thresholding, region growing, seeded watershed segmentation, and edge-base segmentation [9] mainly focus on features of images. For instance, Chen et al. proposed a method to segment cells by performing global thresholding based on Otsu's algorithm [7]. However, this method only has an excellent performance in images with separated cells, not for those in which cell contours touch or overlap with others. Wählby et al. proposed an edge detection method based on the region, in which they use the gradient magnitude of objects pixels and background pixels in the image to do watershed segmentation [8]. The result of these methods is, respectively, prone to be influenced by the noise and would be segmented overly [1]. More sophisticated methods often apply deep learning technologies to improve the accuracy of cell segmentation [3]. For example, Ronneberger et al. proposed a U-Net architecture based on the annotated datasets after data augmentation and use autoencoder to reconstruct image to obtain neuronal structures segmentation [4]. Van Valen et al. proposed a framework named DeepCell, which used optimized deep convolutional neural networks to segment biological images and could be performed in different kinds of biological cell types [5]. Nath et al. proposed a time-saving approach based on four or fewer level set algorithm to segment moving epithelial cells [6]. However, the performance of the approaches mentioned above precisely depends on the types and shapes of cell datasets we would process. Hence, it is unrealistic to achieve proper cell segmentation by only one way, and we propose to combine deep learning technology and traditional computer vision methods to segment different cell datasets.\par
+
+\subsection{Cell tracking in computer vision.} Researching cells' activities like moving, dividing, and their health conditions in a certain period manually is an extremely time-consuming and inefficient work. In recent years, experts in the computer vision area have proposed some methods to automatedly track and analysis cell activities. These approaches could be presented in three broad categories [10]. The first one is establishing a tracking model to detect cells path. For example, Debeir et al. proposed to build a cell tracking path by Vitro phase-contrast in video based on the mean shift algorithm [11]. Ray et al. proposed tracking cells automatically by combing active contour and Kalman filter [12]. One tricky thing is that the fundamental structure of those model evaluation methods above cannot be used in mitosis directly [10], which means that other transformation needed to be done to get good tracking results. The second category is based on the result of the cell after segmenting. For example, Yan et al. proposed to use a classic watershed transform algorithm for cell segmentation first and then use its distance and cells' size to track their path [14]. The tracking result of this method lies in the performance of segmentation in no small extent. The last group is a framework based on Bayesian probabilistic. Kachouie et al. proposed a probabilistic model-based cell tracking method to locate separated cells [13]. In this method, one problem is that it does not have enough assumptions to establish models for different cells [10]. Inspired by the approaches above, we propose to track cells based on segmentation and use the distance between cells and their areas to identify cell activities.
+
+
+
+\section{Methods}
+%Justify and explain the selection of the techniques you implemented, using relevant references and theories where necessary.
+%Reference [6] separates cell tracking methods into two main image processing steps: (1) cell segmentation (the spatial aspect of tracking), and (2) cell association (the temporal aspect). %balabala...
+\subsection{Cell Segmentation}
+\subsubsection{overview}
+The proposed network combines two existing network designs. The first one DeepWater network [1] is a combination of a convolutional neural network and a marker-controlled watershed segmentation. The other one is J-net [2], a multi-resolution neural network for semantic segmentation. The DeepWater network works for DIC-C2DH-HeLa dataset and PhC-C2DL-PSC dataset. And the J-net network only works for the DIC-C2DH-HeLa dataset.
+Moreover, normal watershed algorithm is introduced for the segmentation of Fluo-N2DL-HeLa dataset and PhC-C2DL-PSC dataset. Comparison of segmentation effects between different methods will be discussed in the experiment section.
+\subsubsection{DeepWater Network}
+In DeepWater network, two convolutional neural networks are trained. One ($CNN_{m}$) is for cell marker prediction, and the other one ($CNN_{c}$) is for image foreground (cell regions) prediction. With the outputs of the two CNN, marker-controlled watershed transformation is applied to generate the final segmentation. Both CNNs are in the same structure. Each network is made of 18 convolutional layers with kernel size $3\times 3$. Hour-glass topology with skip connections is applied to the design. The last convolutional layer has a kernel of size $1\times 1$ and a soft-max activation function. A weighted cross-entropy loss function
+\begin{equation}
+L(p, y)=-\frac{\sum_{q \in \Omega} w(q) \log \left(p_{y(q)}(q)\right)}{\sum_{q \in \Omega} w(q)}\label{eq1}
+\end{equation}
+where $w$ is a pixel weight function that is unique for every training sample is used in the network design. Assume we have a cell mask $\phi$ and a set of masks of all cells $\Phi$, to each pixel $q$ we have in the image, we assign a weight $w(q)\in \mathbb{R}^{+} $ by the formula:
+\begin{equation}
+w(q)=\left[1+a \sum_{\phi \in \Phi} \max (d-\|q, \phi\|, 0)\right] \cdot b\label{eq2}
+\end{equation}
+where $||q,\phi ||$ is the Euclidean distance from $q$ to the closest pixel $\phi$.\par 
+With predictions from $CNN_{m}$, we treat them as markers and put them into the watershed transformation. The watershed only focus pixels within the cell regions. The segmentation function which distinguishes the predictions from $CNN_{m}$ and $CNN_{c}$ controls the segmentation process. In the final segmentation, only one segment is associated with one marker.
+\subsubsection{J-net}
+J-net is a simplified version of U-net [3], which merely includes the expansive path. This network assembles the second half of the U-net, therefore, it is named after its shape. In the design of J-net for the DIC-C2DH-HeLa dataset, three segments are included. Each segment is a combination of a CNN and either a deconvolution layer [4],which upsamples the output of the previous layer by the factor of two, or the final layer which creates the segmentation output. \par
+In the first segment, the 
+
+
+
+%segmentation:
+%data set1 :nn+dw
+%data set2 :pre+watershed+post[2]
+%data set3 :guassian+threshold
+
+%association & tracking:
+%data set 2:nearest-neighbor linking approach
+%           mitosis:distance+area
+
+
+\section{Experimental Setup}
+Explain the experimental setup and evaluation methods.
+
+
+\section{Results and Discussion}
+Provide statistical and visual results, along with a discussion of
+method performance and outcomes of the experiments.
+%compare different methods
+
+\section{Conclusion}
+Summarise what worked / did not work and recommend future work.
+
+
+\section{Contribution of Group Members}
+State each group member’s contribution in brief. In at
+most 3 lines per member, describe the component(s) each group member contributed to.
+
+%not integrated yet
+%List the literature references used in your work.
+\begin{thebibliography}{00}
+%introduction
+\bibitem{b1} E. Meijering, O. Dzyubachyk and I. Smal, ``Methods for cell and particle tracking,'' Methods in Enzymology, vol. 504, no. 9, pp. 183-200, February 2012.
+\bibitem{b2}K. Jaqaman, D. Loerke, M. Mettlen, H. Kuwata, S. Grinstein, S.L. Schmid, G. Danuser, ``Robust single-particle tracking in live-cell time-lapse sequences,'' Nature Methods, vol. 5, no.8, pp. 695-702, 2008.
+\bibitem{b3}R. Chatterjee, M. Ghosh, A. S. Chowdhury, N. Ray, ``Cell tracking in microscopic video using matching and linking of bipartite graphs,'' Computer Methods and Programs in Biomedicine, vol. 112, no.3, pp. 422-431, December 2013. 
+\bibitem{b4}K. Li, E. Miller, L. Weiss, P. Campbell, T. Kanade, ``Online tracking of migrating and proliferating cells imaged with phase-contrast microscopy,'' Conference on Computer Vision and Pattern Recognition Workshop, pp. 65-72, 2006
+\bibitem{b5}Kachouie NN, Fieguth P, Ramunas J, Jervis E. Probabilistic model-based cell tracking. International Journal of Biomedical Imaging 2006:1–10.%[未修改]
+%\bibitem{b6} E. Meijering, O. Dzyubachyk, I. Smal, W. A. van Cappellen, ``Tracking in cell and developmental biology,'' Seminars in Cell and Developmental Biology, vol. 20, no. 8, pp. 894-902, October 2009.
+
+
+%literature review
+\bibitem{b1} E. Meijering, O. Dzyubachyk, I. Smal, W. A. van Cappellen. Tracking in cell and developmental biology. Seminars in Cell and Developmental Biology, vol. 20, no. 8, pp. 894-902, October 2009.
+\bibitem{b2} E. Meijering, "Cell Segmentation: 50 Years Down the Road [Life Sciences]," in IEEE Signal Processing Magazine, vol. 29, no. 5, pp. 140-145, Sept. 2012, doi: 10.1109/MSP.2012.2204190.
+\bibitem{b3} E. Moen et al. Deep learning for cellular image analysis. Nature Methods, vol. 16, no. 12, pp. 1233-1246, December 2019. 
+\bibitem{b4} Ronneberger O, Fischer P, Brox T. U-net: Convolutional networks for biomedical image segmentation. Med Image Comput Comput Assist Interv 2015; 9351:234–241.
+\bibitem{b5} Van Valen DA, Kudo T, Lane KM, Macklin DN, Quach NT, DeFelice MM, Maayan I, Tanouchi Y, Ashley EA, Covert MW. Deep learning automates the quantitative analysis of individual cells in live-cell imaging experiments. PLoS Comput Biol 2016;12: e1005177.
+\bibitem{b6}Nath S K, Bunyak F, Palaniappan K. Robust tracking of migrating cells using four-color level set segmentation[C]//International Conference on Advanced Concepts for Intelligent Vision Systems. Springer, Berlin, Heidelberg, 2006: 920-932.
+\bibitem{b7} Xiaowei Chen, Xiaobo Zhou and S. T. C. Wong, "Automated segmentation, classification, and tracking of cancer cell nuclei in time-lapse microscopy," in IEEE Transactions on Biomedical Engineering, vol. 53, no. 4, pp. 762-766, April 2006, doi: 10.1109/TBME.2006.870201.
+\bibitem{b8} Wählby, C., Sintorn, I.M., Erlandsson, F., Borgefors, G. \& Bengtsson, E. Combining intensity, edge and shape information for 2D and 3D segmentation of cell nuclei in tissue sections. J. Microsc. 215, 67–76 (2004).
+\bibitem{b9} Bengtsson E, Wahlby C, Lindblad J. Robust cell image segmentation methods[J]. Pattern Recognition and Image Analysis C/c of Raspoznavaniye Obrazov i Analiz Izobrazhenii., 2004, 14(2): 157-167.
+\bibitem{b10} Dewan M A A, Ahmad M O, Swamy M N S. Tracking biological cells in time-lapse microscopy: An adaptive technique combining motion and topological features[J]. IEEE transactions on biomedical engineering, 2011, 58(6): 1637-1647.
+\bibitem{b11} Debeir O, Van Ham P, Kiss R, et al. Tracking of migrating cells under phase-contrast video microscopy with combined mean-shift processes[J]. IEEE transactions on medical imaging, 2005, 24(6): 697-711.
+\bibitem{b12} Ray N, Acton S T, Ley K. Tracking leukocytes in vivo with shape and size constrained active contours[J]. IEEE transactions on medical imaging, 2002, 21(10): 1222-1235.
+\bibitem{b13} Kachouie N N, Fieguth P, Ramunas J, et al. Probabilistic model-based cell tracking[J]. International Journal of Biomedical Imaging, 2006, 2006.
+\bibitem{b14} Yan J, Zhou X, Yang Q, et al. An effective system for optical microscopy cell image segmentation, tracking and cell phase identification[C]//2006 International Conference on Image Processing. IEEE, 2006: 1917-1920.
+
+
+\end{thebibliography}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Introduction}
+This document is a model and instructions for \LaTeX.
+Please observe the conference page limits. 
+
+\section{Ease of Use}
+
+\subsection{Maintaining the Integrity of the Specifications}
+
+The IEEEtran class file is used to format your paper and style the text. All margins, 
+column widths, line spaces, and text fonts are prescribed; please do not 
+alter them. You may note peculiarities. For example, the head margin
+measures proportionately more than is customary. This measurement 
+and others are deliberate, using specifications that anticipate your paper 
+as one part of the entire proceedings, and not as an independent document. 
+Please do not revise any of the current designations.
+
+\section{Prepare Your Paper Before Styling}
+Before you begin to format your paper, first write and save the content as a 
+separate text file. Complete all content and organizational editing before 
+formatting. Please note sections \ref{AA}--\ref{SCM} below for more information on 
+proofreading, spelling and grammar.
+
+Keep your text and graphic files separate until after the text has been 
+formatted and styled. Do not number text heads---{\LaTeX} will do that 
+for you.
+
+\subsection{Abbreviations and Acronyms}\label{AA}
+Define abbreviations and acronyms the first time they are used in the text, 
+even after they have been defined in the abstract. Abbreviations such as 
+IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use 
+abbreviations in the title or heads unless they are unavoidable.
+
+\subsection{Units}
+\begin{itemize}
+\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
+\item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
+\item Do not mix complete spellings and abbreviations of units: ``Wb/m\textsuperscript{2}'' or ``webers per square meter'', not ``webers/m\textsuperscript{2}''. Spell out units when they appear in text: ``. . . a few henries'', not ``. . . a few H''.
+\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
+\end{itemize}
+
+\subsection{Equations}
+Number equations consecutively. To make your 
+equations more compact, you may use the solidus (~/~), the exp function, or 
+appropriate exponents. Italicize Roman symbols for quantities and variables, 
+but not Greek symbols. Use a long dash rather than a hyphen for a minus 
+sign. Punctuate equations with commas or periods when they are part of a 
+sentence, as in:
+\begin{equation}
+a+b=\gamma\label{eq}
+\end{equation}
+
+Be sure that the 
+symbols in your equation have been defined before or immediately following 
+the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
+the beginning of a sentence: ``Equation \eqref{eq} is . . .''
+
+\subsection{\LaTeX-Specific Advice}
+
+Please use ``soft'' (e.g., \verb|\eqref{Eq}|) cross references instead
+of ``hard'' references (e.g., \verb|(1)|). That will make it possible
+to combine sections, add equations, or change the order of figures or
+citations without having to go through the file line by line.
+
+Please don't use the \verb|{eqnarray}| equation environment. Use
+\verb|{align}| or \verb|{IEEEeqnarray}| instead. The \verb|{eqnarray}|
+environment leaves unsightly spaces around relation symbols.
+
+Please note that the \verb|{subequations}| environment in {\LaTeX}
+will increment the main equation counter even when there are no
+equation numbers displayed. If you forget that, you might write an
+article in which the equation numbers skip from (17) to (20), causing
+the copy editors to wonder if you've discovered a new method of
+counting.
+
+{\BibTeX} does not work by magic. It doesn't get the bibliographic
+data from thin air but from .bib files. If you use {\BibTeX} to produce a
+bibliography you must send the .bib files. 
+
+{\LaTeX} can't read your mind. If you assign the same label to a
+subsubsection and a table, you might find that Table I has been cross
+referenced as Table IV-B3. 
+
+{\LaTeX} does not have precognitive abilities. If you put a
+\verb|\label| command before the command that updates the counter it's
+supposed to be using, the label will pick up the last counter to be
+cross referenced instead. In particular, a \verb|\label| command
+should not go before the caption of a figure or a table.
+
+Do not use \verb|\nonumber| inside the \verb|{array}| environment. It
+will not stop equation numbers inside \verb|{array}| (there won't be
+any anyway) and it might stop a wanted equation number in the
+surrounding equation.
+
+\subsection{Some Common Mistakes}\label{SCM}
+\begin{itemize}
+\item The word ``data'' is plural, not singular.
+\item The subscript for the permeability of vacuum $\mu_{0}$, and other common scientific constants, is zero with subscript formatting, not a lowercase letter ``o''.
+\item In American English, commas, semicolons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
+\item A graph within a graph is an ``inset'', not an ``insert''. The word alternatively is preferred to the word ``alternately'' (unless you really mean something that alternates).
+\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
+\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
+\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
+\item Do not confuse ``imply'' and ``infer''.
+\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
+\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
+\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
+\end{itemize}
+An excellent style manual for science writers is \cite{b7}.
+
+\subsection{Authors and Affiliations}
+\textbf{The class file is designed for, but not limited to, six authors.} A 
+minimum of one author is required for all conference articles. Author names 
+should be listed starting from left to right and then moving down to the 
+next line. This is the author sequence that will be used in future citations 
+and by indexing services. Names should not be listed in columns nor group by 
+affiliation. Please keep your affiliations as succinct as possible (for 
+example, do not differentiate among departments of the same organization).
+
+\subsection{Identify the Headings}
+Headings, or heads, are organizational devices that guide the reader through 
+your paper. There are two types: component heads and text heads.
+
+Component heads identify the different components of your paper and are not 
+topically subordinate to each other. Examples include Acknowledgments and 
+References and, for these, the correct style to use is ``Heading 5''. Use 
+``figure caption'' for your Figure captions, and ``table head'' for your 
+table title. Run-in heads, such as ``Abstract'', will require you to apply a 
+style (in this case, italic) in addition to the style provided by the drop 
+down menu to differentiate the head from the text.
+
+Text heads organize the topics on a relational, hierarchical basis. For 
+example, the paper title is the primary text head because all subsequent 
+material relates and elaborates on this one topic. If there are two or more 
+sub-topics, the next level head (uppercase Roman numerals) should be used 
+and, conversely, if there are not at least two sub-topics, then no subheads 
+should be introduced.
+
+\subsection{Figures and Tables}
+\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
+bottom of columns. Avoid placing them in the middle of columns. Large 
+figures and tables may span across both columns. Figure captions should be 
+below the figures; table heads should appear above the tables. Insert 
+figures and tables after they are cited in the text. Use the abbreviation 
+``Fig.~\ref{fig}'', even at the beginning of a sentence.
+
+\begin{table}[htbp]
+\caption{Table Type Styles}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
+\cline{2-4} 
+\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
+\hline
+copy& More table copy$^{\mathrm{a}}$& &  \\
+\hline
+\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics{fig1.png}}
+\caption{Example of a figure caption.}
+\label{fig}
+\end{figure}
+
+Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
+rather than symbols or abbreviations when writing Figure axis labels to 
+avoid confusing the reader. As an example, write the quantity 
+``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
+units in the label, present them within parentheses. Do not label axes only 
+with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
+\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
+quantities and units. For example, write ``Temperature (K)'', not 
+``Temperature/K''.
+
+\section*{Acknowledgment}
+
+The preferred spelling of the word ``acknowledgment'' in America is without 
+an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
+G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
+acknowledgments in the unnumbered footnote on the first page.
+
+\section*{References}
+
+Please number citations consecutively within brackets \cite{b1}. The 
+sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
+number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
+the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
+
+Number footnotes separately in superscripts. Place the actual footnote at 
+the bottom of the column in which it was cited. Do not put footnotes in the 
+abstract or reference list. Use letters for table footnotes.
+
+Unless there are six authors or more give all authors' names; do not use 
+``et al.''. Papers that have not been published, even if they have been 
+submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
+that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
+Capitalize only the first word in a paper title, except for proper nouns and 
+element symbols.
+
+For papers published in translation journals, please give the English 
+citation first, followed by the original foreign-language citation \cite{b6}.
+
+\begin{thebibliography}{00}
+\bibitem{b1} L. Filip and P. Matula. ``Cell Segmentation by Combining Marker-Controlled Watershed and Deep Learning". arXiv.org, 2020.
+\bibitem{b2} T. Sixta, ``J-net", Github repository, https://github.com/tsixta/J-net, 2018.
+\bibitem{b3} O. Ronneberger, P. Fischer, and T. Brox, ``U-Net: Convolutional Networks for Biomedical Image Segmentation", in Medical Image Computing and Computer-Assisted Intervention – MICCAI 2015. pp. 234–241, 2015.
+\bibitem{b4} S. Evan, J. Long, and T. Darrell. ``Fully Convolutional Networks for Semantic Segmentation". IEEE Transactions on Pattern Analysis and Machine Intelligence 39, no. 4, pp. 640–51, 2017. 
+\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
+\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
+\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
+\end{thebibliography}
+\vspace{12pt}
+\color{red}
+IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
+
+\end{document}
