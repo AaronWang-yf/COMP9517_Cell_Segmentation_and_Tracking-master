@@ -1,6 +1,5 @@
+# WARNING: THIS FILE IS NOT SUPPOSED TO BE MODIFIED!!!
 # In this file, absolute path is required.
-
-
 from deepwater_inference.src.config import Config 
 import os
 from shutil import copyfile

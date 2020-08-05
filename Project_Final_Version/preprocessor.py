@@ -18,7 +18,6 @@ from deepwater_inference.src.deepwater_object import DeepWater
 class Preprocessor:
     def __init__(self, images,params):
         # Save original images file names
-        # print("In initialization now, the length of images is:", len(images))
         self.remaining_img = len(images)
         self.original_images = images
         self.params = params 
@@ -49,7 +48,7 @@ class Preprocessor:
         return processed
 
     def get_DIC_masks(self,images):
-        def post_process(mask): # Use opening operation and watershed to improve the JNet Masks
+        def post_process(mask): # Use morphological opening operation and watershed to improve the JNet Masks
             ret, mask_threh = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
             blurred = cv2.GaussianBlur(mask_threh, (9,9),0)
             kernel=np.ones((5,5),np.uint8) 
@@ -63,7 +62,8 @@ class Preprocessor:
             return (labels)
 
         if (self.params.nn_method=="JNet"):
-            dataset=JNet_Cells(self.original_images,[],self.params.dt_bound,ast.literal_eval(self.params.resolution_levels),load_to_memory=bool(self.params.load_dataset_to_ram))
+            dataset=JNet_Cells(self.original_images,[],self.params.dt_bound,\
+                ast.literal_eval(self.params.resolution_levels),load_to_memory=bool(self.params.load_dataset_to_ram))
             dic_masks = evaluate(self.model,dataset,self.params) 
             new_masks = [] 
             for mask in dic_masks:
@@ -78,9 +78,8 @@ class Preprocessor:
             raise ValueError("Neural Network Method should be JNet or DeepWater!")
 
     def get_Fluo_masks(self,images):
+        # Use thresholding algorithm to segment cells
         def thresholding_batch_process_2(img_path): 
-            # tif = TIFF.open(img_path,mode='r')
-            # image = tif.read_image()
             image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
             kernel = 11
             img = cv2.GaussianBlur(image, (kernel, kernel), 0)
@@ -97,6 +96,7 @@ class Preprocessor:
 
 
     def get_PHC_masks(self,images):
+        # Use thresholding algorithm to segment cells
         def d3_threshold_seg(img_path):
             img = cv2.imread(img_path,cv2.IMREAD_GRAYSCALE) 
             img = cv2.erode(img,np.ones((2,2)))
@@ -106,13 +106,8 @@ class Preprocessor:
             th  = np.where(hist ==np.max(hist))
             th = np.array([th[0].max()]) 
             ret, thresh = cv2.threshold(img,th+20,255,cv2.THRESH_BINARY)
-            # distance = ndi.distance_transform_edt(thresh)
-            # local_maxi = peak_local_max(distance, indices=False, footprint=np.ones((100, 100)),
-            #                             labels=thresh)
-            # markers = ndi.label(local_maxi)[0]
-            # labels = watershed(-distance, markers, mask=thresh)
-            # labels = labels.astype(np.uint8)
             return (thresh)
+
         if (self.params.nn_method == "DeepWater"):
             config = load_config(self.params,mode=2)
             model = DeepWater(config)
@@ -139,8 +134,5 @@ class Preprocessor:
         image = cv2.imread(self.original_images[self.counter],cv2.IMREAD_GRAYSCALE)
         mask = self.masks[self.counter]
         self.counter += 1
-        # self.remaining_img -=1
-        # if (self.remaining_img==0):
-        #     print("WARNING: there are no images left in the list now!")
         return image, mask
        

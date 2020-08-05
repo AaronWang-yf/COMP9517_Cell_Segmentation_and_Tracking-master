@@ -1,3 +1,19 @@
+"""
+UNSW 20T2 COMP9517 Computer Vision Project
+Group Name: Serve Auntie A Cup of Cappuccino
+Group Members: Raymond Lu, Con Tieu-Vinh, Yunfan Wang, Xiaocong Chen, Shuang Liang
+
+Acknowledgement to:
+1.Tomas Sixta, J-Net, https://github.com/tsixta/jnet
+2.Filip Lux, deepwater, https://gitlab.fi.muni.cz/xlux/deepwater
+"""
+
+"""
+Package Specification:
+1. Tensorflow 2.1.0
+2. PyTorch 0.4.1.post2
+"""
+
 from preprocessor import Preprocessor
 from detector import Detector
 from matcher import Matcher
@@ -10,18 +26,16 @@ import time
 from param import Params
 import os
 
-# path = 'data/Fluo-N2DL-HeLa/Sequence 1/'
-
-
-
+# Before running this program, please alter the settings in the param.py
 def main():
+
     params = Params()
 
     if not os.path.isdir(params.dataset_root):
         raise Exception("Unable to load images from "+params.dataset_root+": not a directory")
 
     if not os.path.exists(params.output_dir):
-        os.mkdir(params.output_dir) 
+        os.makedirs(params.output_dir) 
     
     if not os.path.isdir(params.output_dir):
         raise Exception("Unable to save results to "+params.output_dir+": not a directory")
@@ -32,8 +46,8 @@ def main():
         path = params.dataset_root + "/"+ str(list(params.images_idx.keys())[0])
     else:
         path = params.dataset_root
-    # seq = []
-    print(path)
+
+    print("The current data path is: ",path)
     images = glob.glob(path + '/*.tif')
     #sort the order of images
     images = [(int(x[-7:-4]),x) for x in images]
@@ -41,20 +55,20 @@ def main():
     images = [x[1] for x in images]
         
     preprocessor = Preprocessor(images,params)
-    detector = Detector(preprocessor)
+    detector = Detector(preprocessor,params)
     matcher = Matcher(detector)
     drawer = Drawer(matcher,preprocessor)
     masks = preprocessor.get_masks()
 
     print('Generating all frames and cell states...')
-    # based on the contours for all images, tracking trajectory and mitosis image by image
+    # Based on the contours for all images, tracking trajectory and mitosis image by image
     drawer.load()
     print('Successfully loaded all images')
 
     gen_path = path + "/gen"
     print("Now the gen path is ",gen_path)
     if not os.path.exists(gen_path):
-        os.mkdir(gen_path)
+        os.makedirs(gen_path)
         print("gen path created successfully")
 
     counter = 1
@@ -74,7 +88,7 @@ def main():
 
     analysis_path = path + "/analysis"
     if not os.path.exists(analysis_path):
-      os.mkdir(analysis_path)
+      os.makedirs(analysis_path)
       print("analysis path created successfully")
 
 
@@ -94,12 +108,7 @@ def main():
                     display_image = drawer.serve(frame)
             else:
                 display_image = drawer.serve(frame)
-            # plt.imshow(display_image)
-            # plt.axis('off')
-            # plt.show()
-            # cv2.imshow('image', display_image)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
+
             file_name = analysis_path+"/frame_"+str(frame)+"_cellID_"+str(cell_id)+".tif"
             cv2.imwrite(file_name,display_image)
 

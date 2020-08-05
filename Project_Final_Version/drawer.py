@@ -22,37 +22,6 @@ class Drawer:
         self.gen_history = []        
         self.cells_history = []
 
-    # # Load all images and cells from Matcher
-    # def load(self):
-    #     while self.preprocessor.status:
-    #         image, cells = self.matcher.next(self.cells_history)
-    #         ### one channel to three
-    #         image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-    #         self.images_history.append(image)
-    #         self.cells_history.append(copy.deepcopy(cells))
-    #         print('image number:',len(self.cells_history),'cell number:',len(cells))
-    #         # Apply contours and ids on to image
-    #         for c in cells.values():
-    #             ##### draw with different color if split
-    #             # if_split = c.if_split()
-    #             if_split = c.split_c
-    #             if if_split:
-    #                 image = cv2.drawContours(image, c.get_contour(), -1, (255, 0, 0), 2)
-    #             else:
-    #                 image = cv2.drawContours(image, c.get_contour(), -1, (0, 255, 0), 2)
-    #             image = cv2.putText(image, str(c.get_id()), c.get_centroid(), 1, 1, (0, 255, 0), 1)
-    #             # Draw previous trajectory
-    #             previous_positions = c.get_prev_positions()
-    #             ##### draw with different color
-    #             for i in range(len(previous_positions) - 1):
-    #                 image = cv2.line(image, previous_positions[i], previous_positions[i + 1], (0, 0, 255), 1, 4)
-
-    #         # Show count of cells
-    #         image = cv2.putText(image, f'Cell count: {len(cells)}', CELL_COUNT_LOC, 1, 1, (0, 255, 0), 1)
-
-    #         # Save generated image
-    #         self.gen_history.append(image)
-
     # Load all images and cells from Matcher
     def load(self):
         while self.preprocessor.status:
@@ -72,11 +41,10 @@ class Drawer:
             for c in current_cells.values():
                 ##### draw with different color if split
 
-                if (c.split_p):
+                if (c.split_p): # If a cell is a parent in a mitosis
                     mitosis_parent_count +=1
 
                 if_split = c.if_split()
-                # if_split = c.split_c
                 if if_split:
                     current_image = cv2.drawContours(current_image, c.get_contour(), -1, (255, 0, 0), 2)
                 else:

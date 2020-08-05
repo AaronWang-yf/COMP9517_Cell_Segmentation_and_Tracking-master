@@ -40,7 +40,7 @@ class Matcher:
         else:
             print('Cell ID not found for deletion')
 
-            # Gets a set of new contours, generates centroids and matches new cells to existing cells
+     # Gets a set of new contours, generates centroids and matches new cells to existing cells
 
     def next(self, cells_history):
         # Get next set of contours from Detector
@@ -50,7 +50,7 @@ class Matcher:
         cents, areas = self.__get_cents_areas__(contours)
         intensities = self.__get_intensity__(image, contours)
 
-        # If no existing cells, add all new cells       
+        # If there are no existing cells, add all new cells       
         if not cells_history:
             for contour, cent, area, intensity in zip(contours, cents, areas, intensities):
                 self.register(contour, cent, area, intensity)
@@ -63,22 +63,10 @@ class Matcher:
                 self.register(contour, cent, area, intensity)
 
             ## Perform matching and update matched cells, or add new cell if min_dist < DIST_THRESHOLD
-            # for old in pre_cells:
-            #     cent = pre_cells[old].get_centroid()
-            #     contour = pre_cells[old].get_contour()
-            #     area = pre_cells[old].get_area()
-            #     distances = [(self.__distance__(self.existing_cells[key].get_centroid(), cent), key) for key in
-            #                  self.existing_cells]
-            #     min_dist, key = sorted(distances, key=lambda x: x[0], reverse=False)[0]
-            #     if min_dist < DIST_THRESHOLD:
-            #         new_cent = self.existing_cells[key].get_centroid()
-            #         new_contour = self.existing_cells[key].get_contour()
-            #         new_area = self.existing_cells[key].get_area()
-            #         self.existing_cells[key] = pre_cells[old]
-            #         self.existing_cells[key].id = key
-            #         self.existing_cells[key].update(new_contour, new_cent, new_area)
-
             # old is key for pre_cells
+            # key is the id of an existing cell
+            # sim represents similarity, which equals to area * intensity. This is used for measuring the
+            # similarity between cells
             self.flag += 1
             for old in pre_cells:
                 old_cent = pre_cells[old].get_centroid()
@@ -102,10 +90,10 @@ class Matcher:
                 sec_intensity = self.existing_cells[sec_key].intensity
                 sec_sim = sec_area * sec_intensity
 
+                # If an existing cell meets the mitosis criteria
                 if MIN_SPLIT_RATIO <= min_area / old_area <= MAX_SPLIT_RATIO and \
                         MIN_SPLIT_RATIO <= sec_area / old_area <= MAX_SPLIT_RATIO and \
                         sec_dist < DIST_THRESHOLD:
-                    # self.existing_cells[key].split = True
                     pre_cells[old].split_p = True
                     self.existing_cells[min_key].split_c = True
                     self.existing_cells[sec_key].split_c = True

@@ -1,3 +1,12 @@
+"""
+Specification:
+A normal user should only change the parameter in the "General Parameters" part. 
+However, you need to know that we also make some set parameters in the "matcher.py" in our methodology.
+You need to modify those parameters really carefully. Based on our experiments, we assume those parameters are
+good enough for the datasets we are researching on.
+"""
+
+
 class Params:
     def __init__(self):
         #---------- General Parameters ----------#
@@ -10,8 +19,11 @@ class Params:
         self.dataset = "DIC-C2DH-HeLa"
         self.images_idx = {"01":[]}
         self.nn_method = "DeepWater" # choose JNet or DeepWater or None
+
+        # Two trivial parameters added after demo
+        self.cuda = True # Use GPU or not
+        self.min_cell_area = 4 # The minimum cell area threshold
         #---------- JNet Parameters ----------#
-        self.cuda = True 
         self.output_dir = "./results/segmentations"
         self.mode = 'vis'
         self.resolution_levels ='[-2,-1,0]'#List of resolutions in the pipeline. 0 means the original resolution, -1 downscale by factor 2, -2 downscale by factor 4 etc
