@@ -4,6 +4,10 @@
 import cv2
 import copy
 
+"""
+A module that is used for putting texts and drawing contours as well as trajectories
+"""
+
 CELL_COUNT_LOC = (20, 20)
 CELL_MITOSIS_LOC = (20,40)
 CELL_DETAILS_LOC_1 = (20, 20)

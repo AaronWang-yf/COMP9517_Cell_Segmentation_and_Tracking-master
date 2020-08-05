@@ -5,8 +5,10 @@ import cv2
 import copy
 import numpy as np
 
-# Detector asks for a preprocessed image from the Preprocessor;
-# Once received, it finds the contours of the image and returns the set of contours
+"""
+Detector asks for a preprocessed image from the Preprocessor;
+Once received, it finds the contours of the image and returns the set of contours
+"""
 class Detector:
     def __init__(self, preprocessor,params):
         self.preprocessor = preprocessor
