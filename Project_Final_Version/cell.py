@@ -3,6 +3,9 @@
 # cv2 3.4
 import numpy as np
 
+"""
+A module for storing cell's information
+"""
 
 # Cell class save all information of a cell, including analysing method for task 3
 class Cell:

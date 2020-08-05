@@ -6,12 +6,29 @@ Group Members: Raymond Lu, Con Tieu-Vinh, Yunfan Wang, Xiaocong Chen, Shuang Lia
 Acknowledgement to:
 1.Tomas Sixta, J-Net, https://github.com/tsixta/jnet
 2.Filip Lux, deepwater, https://gitlab.fi.muni.cz/xlux/deepwater
+
+We use the Deep Water models pre-trained by Filip. And we use Tomas's code with our
+modifications to train the J-net model. 
+
+Details of training the J-net model is available in the following Google Drive link:
+https://drive.google.com/drive/folders/1EkcRgZZmvGKJ1xrUgf047DSvd98mfYHi?usp=sharing
 """
 
 """
 Package Specification:
 1. Tensorflow 2.1.0
 2. PyTorch 0.4.1.post2
+"""
+
+"""
+Before running this program, please change the settings in the param.py.
+This program is supposed to be run on an environment configured with GPU.
+The command of execution is: python3 main.py
+WARNING: The datasets and checkpoints of DeepWater models are not included here.
+Please go to https://drive.google.com/drive/folders/1R8SF8lh6TWHVvD4ZTd6McE60kOyVZVLv?usp=sharing
+to download.
+This program could be run on Google Colab, please check the "Presentation.ipynb" on the Google Drive 
+for more information. 
 """
 
 from preprocessor import Preprocessor
@@ -26,7 +43,7 @@ import time
 from param import Params
 import os
 
-# Before running this program, please alter the settings in the param.py
+
 def main():
 
     params = Params()
