@@ -3,8 +3,6 @@ Preprocessor processes the raw input images and get their masks.
 Deep learning methods and thresholding algorithm are provided for the user to choose
 """
 
-
-
 import cv2
 import numpy as np 
 import tensorflow as tf
