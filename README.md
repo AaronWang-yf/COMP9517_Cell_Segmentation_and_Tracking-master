@@ -1,5 +1,6 @@
 # COMP9517
 This is a group in COMP9517 Computer Vision in 2020 Term 2.
+This project got 29.8 out of 30 scores.
 
 The team members are:
 - Raymond Lu
