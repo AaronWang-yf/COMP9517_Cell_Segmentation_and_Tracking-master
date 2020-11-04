@@ -19,8 +19,3 @@ Before running the code, the user is supposed to change the parameters in the **
 
 For better understanding of our work, please feel free to watch our videos on YouTube: [Cell Segmentation and Tracking](https://www.youtube.com/playlist?list=PLHfcYjCUywJr_ZX00WXm5lFgK9OJGudpp)
 
-Acknowledgement to:
-1. Tomas Sixta, J-Net, https://github.com/tsixta/jnet
-2. Filip Lux, deepwater, https://gitlab.fi.muni.cz/xlux/deepwater
-
-
