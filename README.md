@@ -1,4 +1,4 @@
-# COMP9517
+# COMP9517 Computer Vision 2020 Term 2 Project Cell Segmentation and Tracking, UNSW
 This is a group in COMP9517 Computer Vision in 2020 Term 2.
 This project got 29.8 out of 30 scores.
 
